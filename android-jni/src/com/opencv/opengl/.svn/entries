@@ -1,0 +1,40 @@
+8
+
+dir
+4591
+https://code.ros.org/svn/opencv/trunk/opencv/android/android-jni/src/com/opencv/opengl
+https://code.ros.org/svn/opencv
+
+
+
+2010-09-22T12:13:26.733747Z
+3661
+ethanrublee
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+73c94f0f-984f-4a5f-82bc-2d8db8d8ee08
+
+GL2CameraViewer.java
+file
+
+
+
+
+2011-01-28T20:41:34.000000Z
+3028ee36627f29bfcf471e170548c051
+2010-09-22T12:13:26.733747Z
+3661
+ethanrublee
+

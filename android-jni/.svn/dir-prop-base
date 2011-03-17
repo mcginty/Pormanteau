@@ -1,0 +1,22 @@
+K 10
+svn:ignore
+V 106
+obj
+libs
+.project
+.classpath
+local.env.mk
+
+assets
+
+bin
+
+.settings
+
+.cproject
+
+build.xml
+
+local.properties
+
+END

@@ -1,0 +1,110 @@
+8
+
+dir
+4591
+https://code.ros.org/svn/opencv/trunk/opencv/android/android-jni
+https://code.ros.org/svn/opencv
+
+
+
+2010-11-30T01:19:45.251190Z
+4133
+ethanrublee
+has-props
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+73c94f0f-984f-4a5f-82bc-2d8db8d8ee08
+
+default.properties
+file
+
+
+
+
+2011-01-28T20:41:34.000000Z
+763ceedc0d2468333bde177fca755292
+2010-09-22T01:47:11.513023Z
+3654
+ethanrublee
+
+jni
+dir
+
+project_create.sh
+file
+
+
+
+
+2011-01-28T20:41:34.000000Z
+4d62986c65b9da6ab6b2222a04bcdacc
+2010-10-12T02:23:08.588936Z
+3726
+ethanrublee
+has-props
+
+AndroidManifest.xml
+file
+
+
+
+
+2011-01-28T20:41:34.000000Z
+ac08c5835fb7fc3393ee7d80fdf4fb69
+2010-11-27T07:59:22.241802Z
+4071
+ethanrublee
+
+src
+dir
+
+sample.local.env.mk
+file
+
+
+
+
+2011-01-28T20:41:34.000000Z
+a09c1cfc154f5e6460f16e7e91d20985
+2010-11-27T09:08:19.900161Z
+4078
+ethanrublee
+
+res
+dir
+
+README.txt
+file
+
+
+
+
+2011-01-28T20:41:34.000000Z
+ec03e233edde3fb1c29c8b378ece09f4
+2010-11-27T08:39:09.834495Z
+4074
+ethanrublee
+
+Makefile
+file
+
+
+
+
+2011-01-28T20:41:34.000000Z
+8b31eb53179b8fca9e6fa6c7659a7e3d
+2010-11-27T09:08:19.900161Z
+4078
+ethanrublee
+
