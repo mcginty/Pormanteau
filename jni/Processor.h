@@ -54,8 +54,8 @@ private:
   cv::Size imgsize;
 
   cv::Mat comparisonImg;
-  cv::DescriptorExtractor *descriptorExtractor;
-  cv::DescriptorMatcher *descriptorMatcher;
+  cv::Ptr<cv::DescriptorExtractor> descriptorExtractor;
+  cv::Ptr<cv::DescriptorMatcher> descriptorMatcher;
 
   cv::Mat img1;
   cv::RNG rng;

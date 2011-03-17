@@ -158,8 +158,8 @@ void Processor::setupDescriptorExtractorMatcher(const char* filename, int featur
 
 //    D("descriptorExtractor: %p, descriptorMatcher: %p, fd: %p\n", descriptorExtractor, descriptorMatcher,
 //        fd);
-//    D("descriptorExtractor.empty(): %d, descriptorMatcher.empty(): %d, fd.empty(): %d\n",
-//        descriptorExtractor.empty(), descriptorMatcher.empty());//, fd.empty());
+    D("descriptorExtractor.empty(): %d, descriptorMatcher.empty(): %d, fd.empty(): %d\n",
+        descriptorExtractor.empty(), descriptorMatcher.empty());//, fd.empty());
     vector<KeyPoint> keypoints1;
     fd->detect(img1, keypoints1);
     D("keypoints1 size: %zu\n", keypoints1.size());
@@ -172,7 +172,7 @@ void Processor::setupDescriptorExtractorMatcher(const char* filename, int featur
 void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int feature_type)
 {
   D("Processor::detectAndDrawFeatures\n");
-  FeatureDetector* fd = 0;
+  cv::Ptr<FeatureDetector> fd = 0;
 
   switch (feature_type)
   {
@@ -191,7 +191,7 @@ void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int featu
 
   Mat img = pool->getImage(input_idx);
 
-  if (img.empty() || greyimage.empty() || fd == 0)
+  if (img.empty() || greyimage.empty() || fd.empty())
     return; //no image at input_idx!
 
 
@@ -201,9 +201,9 @@ void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int featu
   //cvtColor(*img,*grayimage,CV_RGB2GRAY);
 
 
-//    doIteration(img1, greyimage, keypoints1, descriptors1,
-//                 fd, descriptorExtractor, descriptorMatcher,
-//                 rng, img);
+    doIteration(img1, greyimage, keypoints1, descriptors1,
+                 fd, descriptorExtractor, descriptorMatcher,
+                 rng, img);
 
 //  fd->detect(greyimage, keypoints);
 
