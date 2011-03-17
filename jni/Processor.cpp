@@ -167,7 +167,7 @@ void doIteration( const Mat& img1, Mat& img2,
         // draw inliers
 //        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
 //                   );
-//        D("drawMatches (inlier)\n");
+        D("drawMatches (inlier)\n");
     }
     else
     {
@@ -261,7 +261,7 @@ void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int featu
 //    circle(img, it->pt, 3, cvScalar(255, 0, 255, 0));
   }
 
-  //pool->addImage(output_idx,outimage);
+  pool->addImage(output_idx,outimage);
 
 }
 static double computeReprojectionErrors(const vector<vector<Point3f> >& objectPoints,
