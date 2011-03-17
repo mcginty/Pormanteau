@@ -111,10 +111,13 @@ void doIteration( const Mat& img1, Mat& img2,
         queryIdxs[i] = filteredMatches[i].queryIdx;
         trainIdxs[i] = filteredMatches[i].trainIdx;
     }
+    D("filteredMatches succeeded\n");
 
     vector<Point2f> points1; KeyPoint::convert(keypoints1, points1, queryIdxs);
     vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, trainIdxs);
+    D("keyPoint::convert succeeded\n");
     H12 = findHomography( Mat(points1), Mat(points2), CV_RANSAC, 0.0 );
+    D("findHomography\n");
 
     if( !H12.empty() ) // filter outliers
     {
@@ -122,17 +125,23 @@ void doIteration( const Mat& img1, Mat& img2,
         vector<Point2f> points1; KeyPoint::convert(keypoints1, points1, queryIdxs);
         vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, trainIdxs);
         Mat points1t; perspectiveTransform(Mat(points1), points1t, H12);
+        D("perspectiveTransform succeeded\n");
         for( size_t i1 = 0; i1 < points1.size(); i1++ )
         {
             if( norm(points2[i1] - points1t.at<Point2f>((int)i1,0)) < 4 ) // inlier
                 matchesMask[i1] = 1;
         }
+        D("inliers succeeded\n");
         // draw inliers
         drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
                    );
+        D("drawMatches (inlier)\n");
     }
     else
+    {
         drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg );
+        D("drawMatches (outlier)\n");
+    }
 }
 
 void Processor::setupDescriptorExtractorMatcher(const char* filename, int feature_type)
