@@ -164,6 +164,7 @@ void doIteration( const Mat& img1, Mat& img2,
 
     vector<Point2f> *points1 = new vector<Point2f>(queryIdxs->size());
     D("queryIdxs.empty(): %d\n", queryIdxs->empty());
+    D("points1.size(): %d\n", points1->size());
 
     validateKeypoints(keypoints1, *queryIdxs);
     convertKeypoints(keypoints1, *points1, *queryIdxs);
