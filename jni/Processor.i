@@ -48,4 +48,6 @@ public:
 	
 	void drawText(int idx, image_pool* pool, const char* text);
 
+	void setupDescriptorExtractorMatcher(const char* filename, int feature_type);
+
 };
