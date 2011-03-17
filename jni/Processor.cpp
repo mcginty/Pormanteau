@@ -36,7 +36,7 @@ Processor::~Processor()
 
 
 
-void crossCheckMatching( DescriptorMatcher *descriptorMatcher,
+void crossCheckMatching( Ptr<DescriptorMatcher> &descriptorMatcher,
                          const Mat& descriptors1, const Mat& descriptors2,
                          vector<DMatch>& filteredMatches12, int knn=1 )
 {
@@ -84,8 +84,8 @@ void warpPerspectiveRand( const Mat& src, Mat& dst, Mat& H, RNG& rng )
 
 void doIteration( const Mat& img1, Mat& img2,
                   vector<KeyPoint>& keypoints1, const Mat& descriptors1,
-                  FeatureDetector *detector, DescriptorExtractor *descriptorExtractor,
-                  DescriptorMatcher *descriptorMatcher,
+                  Ptr<FeatureDetector>& detector, Ptr<DescriptorExtractor> &descriptorExtractor,
+                  Ptr<DescriptorMatcher> &descriptorMatcher,
                   RNG& rng, Mat& drawImg )
 {
     assert( !img1.empty() );
@@ -156,10 +156,10 @@ void Processor::setupDescriptorExtractorMatcher(const char* filename, int featur
         break;
     }
 
-    D("descriptorExtractor: %p, descriptorMatcher: %p, fd: %p\n", descriptorExtractor, descriptorMatcher,
-        fd);
-    D("descriptorExtractor.empty(): %d, descriptorMatcher.empty(): %d, fd.empty(): %d\n",
-        descriptorExtractor->empty(), descriptorMatcher->empty(), fd->empty());
+//    D("descriptorExtractor: %p, descriptorMatcher: %p, fd: %p\n", descriptorExtractor, descriptorMatcher,
+//        fd);
+//    D("descriptorExtractor.empty(): %d, descriptorMatcher.empty(): %d, fd.empty(): %d\n",
+//        descriptorExtractor.empty(), descriptorMatcher.empty());//, fd.empty());
     vector<KeyPoint> keypoints1;
     fd->detect(img1, keypoints1);
     D("keypoints1 size: %zu\n", keypoints1.size());
@@ -201,9 +201,9 @@ void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int featu
   //cvtColor(*img,*grayimage,CV_RGB2GRAY);
 
 
-    doIteration(img1, greyimage, keypoints1, descriptors1,
-                 fd, descriptorExtractor, descriptorMatcher,
-                 rng, img);
+//    doIteration(img1, greyimage, keypoints1, descriptors1,
+//                 fd, descriptorExtractor, descriptorMatcher,
+//                 rng, img);
 
 //  fd->detect(greyimage, keypoints);
 
