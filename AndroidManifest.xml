@@ -5,14 +5,28 @@
       android:versionName="1.0">
     <uses-sdk android:minSdkVersion="7" />
 
-    <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".Portmanteau"
-                  android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+	<application android:debuggable="false" android:icon="@drawable/icon">
+		<activity android:name="com.cs498.portmanteau.Portmanteau" android:screenOrientation="landscape"
+			android:configChanges="orientation|keyboardHidden|keyboard"
+			android:label="@string/app_name"
+			>
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+        
+        <activity android:name="com.opencv.camera.CameraConfig" android:label="@string/app_name"
+			android:screenOrientation="landscape" 
+			android:configChanges="orientation|keyboardHidden|keyboard">
+		</activity>
 
     </application>
+    
+    
+	<uses-feature android:glEsVersion="0x00020000" android:required="true"/>
+	<uses-feature android:name="android.hardware.camera" android:required="true"/>
+	<uses-permission android:name="android.permission.CAMERA"></uses-permission>
+	<uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 </manifest>
