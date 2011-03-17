@@ -82,6 +82,24 @@ void warpPerspectiveRand( const Mat& src, Mat& dst, Mat& H, RNG& rng )
     warpPerspective( src, dst, H, src.size() );
 }
 
+void validateKeypoints(const std::vector<KeyPoint>& keypoints, const vector<int>& keypointIndexes)
+{
+  for( size_t i = 0; i < keypointIndexes.size(); i++ )
+  {
+    int idx = keypointIndexes[i];
+    if( idx >= 0 ) {
+      if (idx > (keypoints.size() - 1)) {
+        D("we got an out of bounds thing. idx: %d, size: %zu\n", idx, keypoints.size());
+      }
+    }
+    else
+    {
+      D("keypointIndexes has element < 0. TODO: process this case" );
+      //points2f[i] = Point2f(-1, -1);
+    }
+  }
+}
+
 void doIteration( const Mat& img1, Mat& img2,
                   vector<KeyPoint>& keypoints1, const Mat& descriptors1,
                   Ptr<FeatureDetector>& detector, Ptr<DescriptorExtractor> &descriptorExtractor,
@@ -115,10 +133,18 @@ void doIteration( const Mat& img1, Mat& img2,
 
     vector<Point2f> points1;
     D("queryIdxs.empty(): %d\n", queryIdxs.empty());
+
+    validateKeypoints(keypoints1, queryIdxs);
     KeyPoint::convert(keypoints1, points1, queryIdxs);
     D("keyPoint1::convert succeeded\n");
-    vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, trainIdxs);
+
+    vector<Point2f> points2;
+    D("trainIdxs.empty(): %d\n", trainIdxs.empty());
+
+    validateKeypoints(keypoints1, queryIdxs);
+    KeyPoint::convert(keypoints2, points2, trainIdxs);
     D("keyPoint2::convert succeeded\n");
+
     H12 = findHomography( Mat(points1), Mat(points2), CV_RANSAC, 0.0 );
     D("findHomography\n");
 
