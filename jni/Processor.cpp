@@ -9,6 +9,15 @@
 
 #include <sys/stat.h>
 
+#define DEBUG 1
+
+#if DEBUG
+#include <android/log.h>
+#  define  D(x...)  __android_log_print(ANDROID_LOG_INFO,"helloneon",x)
+#else
+#  define  D(...)  do {} while (0)
+#endif
+
 using namespace cv;
 
 Processor::Processor() :
@@ -126,7 +135,12 @@ void Processor::setupDescriptorExtractorMatcher(const char* filename, int featur
 {
     descriptorExtractor = DescriptorExtractor::create("SURF");
     descriptorMatcher = DescriptorMatcher::create("FlannBased");
+    D("filename: %s\n", filename);
     img1 = imread(filename);
+    if (img1.empty())
+    {
+      D("img1 empty?: %d\n", img1.empty());
+    }
     FeatureDetector* fd = 0;
 
     switch (feature_type)
@@ -142,8 +156,11 @@ void Processor::setupDescriptorExtractorMatcher(const char* filename, int featur
         break;
     }
 
+    D("descriptorExtractor: %p, descriptorMatcher: %p, fd: %p\n", descriptorExtractor, descriptorMatcher,
+        fd);
     vector<KeyPoint> keypoints1;
     fd->detect(img1, keypoints1);
+    D("keypoints1 size: %zu\n", keypoints1.size());
 
     descriptorExtractor->compute(img1, keypoints1, descriptors1);
     rng = theRNG();
