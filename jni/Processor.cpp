@@ -253,9 +253,9 @@ void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int featu
 
 
     D("begin doIteration\n");
-    doIteration(img1, greyimage, keypoints1, descriptors1,
-                 fd, descriptorExtractor, descriptorMatcher,
-                 rng, img);
+//    doIteration(img1, greyimage, keypoints1, descriptors1,
+//                 fd, descriptorExtractor, descriptorMatcher,
+//                 rng, img);
     D("doIteration finished\n");
 
 //  fd->detect(greyimage, keypoints);
