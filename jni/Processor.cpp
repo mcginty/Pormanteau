@@ -176,7 +176,9 @@ void doIteration( const Mat& img1, Mat& img2,
     }
 //    delete points1;
 //    delete points2;
+    D("deleting queryIdxs\n");
     delete queryIdxs;
+    D("deleting trainIdxs\n");
     delete trainIdxs;
 }
 
@@ -250,18 +252,20 @@ void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int featu
   //cvtColor(*img,*grayimage,CV_RGB2GRAY);
 
 
+    D("begin doIteration\n");
     doIteration(img1, greyimage, keypoints1, descriptors1,
                  fd, descriptorExtractor, descriptorMatcher,
                  rng, img);
+    D("doIteration finished\n");
 
 //  fd->detect(greyimage, keypoints);
 
 //  for (vector<KeyPoint>::const_iterator it = keypoints.begin(); it != keypoints.end(); ++it)
-  {
+//  {
 //    circle(img, it->pt, 3, cvScalar(255, 0, 255, 0));
-  }
+//  }
 
-  pool->addImage(output_idx,outimage);
+  //pool->addImage(output_idx,outimage);
 
 }
 static double computeReprojectionErrors(const vector<vector<Point3f> >& objectPoints,
