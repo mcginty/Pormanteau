@@ -25,6 +25,130 @@ Processor::~Processor()
   // TODO Auto-generated destructor stub
 }
 
+
+
+void crossCheckMatching( DescriptorMatcher *descriptorMatcher,
+                         const Mat& descriptors1, const Mat& descriptors2,
+                         vector<DMatch>& filteredMatches12, int knn=1 )
+{
+    filteredMatches12.clear();
+    vector<vector<DMatch> > matches12, matches21;
+    descriptorMatcher->knnMatch( descriptors1, descriptors2, matches12, knn );
+    descriptorMatcher->knnMatch( descriptors2, descriptors1, matches21, knn );
+    for( size_t m = 0; m < matches12.size(); m++ )
+    {
+        bool findCrossCheck = false;
+        for( size_t fk = 0; fk < matches12[m].size(); fk++ )
+        {
+            DMatch forward = matches12[m][fk];
+
+            for( size_t bk = 0; bk < matches21[forward.trainIdx].size(); bk++ )
+            {
+                DMatch backward = matches21[forward.trainIdx][bk];
+                if( backward.trainIdx == forward.queryIdx )
+                {
+                    filteredMatches12.push_back(forward);
+                    findCrossCheck = true;
+                    break;
+                }
+            }
+            if( findCrossCheck ) break;
+        }
+    }
+}
+
+void warpPerspectiveRand( const Mat& src, Mat& dst, Mat& H, RNG& rng )
+{
+    H.create(3, 3, CV_32FC1);
+    H.at<float>(0,0) = rng.uniform( 0.8f, 1.2f);
+    H.at<float>(0,1) = rng.uniform(-0.1f, 0.1f);
+    H.at<float>(0,2) = rng.uniform(-0.1f, 0.1f)*src.cols;
+    H.at<float>(1,0) = rng.uniform(-0.1f, 0.1f);
+    H.at<float>(1,1) = rng.uniform( 0.8f, 1.2f);
+    H.at<float>(1,2) = rng.uniform(-0.1f, 0.1f)*src.rows;
+    H.at<float>(2,0) = rng.uniform( -1e-4f, 1e-4f);
+    H.at<float>(2,1) = rng.uniform( -1e-4f, 1e-4f);
+    H.at<float>(2,2) = rng.uniform( 0.8f, 1.2f);
+
+    warpPerspective( src, dst, H, src.size() );
+}
+
+void doIteration( const Mat& img1, Mat& img2,
+                  vector<KeyPoint>& keypoints1, const Mat& descriptors1,
+                  FeatureDetector *detector, DescriptorExtractor *descriptorExtractor,
+                  DescriptorMatcher *descriptorMatcher,
+                  RNG& rng, Mat& drawImg )
+{
+    assert( !img1.empty() );
+    assert( !img2.empty()/* && img2.cols==img1.cols && img2.rows==img1.rows*/ );
+    Mat H12;
+
+    vector<KeyPoint> keypoints2;
+    detector->detect( img2, keypoints2 );
+
+    Mat descriptors2;
+    descriptorExtractor->compute( img2, keypoints2, descriptors2 );
+
+    vector<DMatch> filteredMatches;
+    crossCheckMatching( descriptorMatcher, descriptors1, descriptors2, filteredMatches, 1 );
+
+    vector<int> queryIdxs( filteredMatches.size() ), trainIdxs( filteredMatches.size() );
+    for( size_t i = 0; i < filteredMatches.size(); i++ )
+    {
+        queryIdxs[i] = filteredMatches[i].queryIdx;
+        trainIdxs[i] = filteredMatches[i].trainIdx;
+    }
+
+    vector<Point2f> points1; KeyPoint::convert(keypoints1, points1, queryIdxs);
+    vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, trainIdxs);
+    H12 = findHomography( Mat(points1), Mat(points2), CV_RANSAC, 0.0 );
+
+    if( !H12.empty() ) // filter outliers
+    {
+        vector<char> matchesMask( filteredMatches.size(), 0 );
+        vector<Point2f> points1; KeyPoint::convert(keypoints1, points1, queryIdxs);
+        vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, trainIdxs);
+        Mat points1t; perspectiveTransform(Mat(points1), points1t, H12);
+        for( size_t i1 = 0; i1 < points1.size(); i1++ )
+        {
+            if( norm(points2[i1] - points1t.at<Point2f>((int)i1,0)) < 4 ) // inlier
+                matchesMask[i1] = 1;
+        }
+        // draw inliers
+        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
+                   );
+    }
+    else
+        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg );
+}
+
+void Processor::setupDescriptorExtractorMatcher(const char* filename, int feature_type)
+{
+    descriptorExtractor = DescriptorExtractor::create("SURF");
+    descriptorMatcher = DescriptorMatcher::create("FlannBased");
+    img1 = imread(filename);
+    FeatureDetector* fd = 0;
+
+    switch (feature_type)
+    {
+      case DETECT_SURF:
+        fd = &surfd;
+        break;
+      case DETECT_FAST:
+        fd = &fastd;
+        break;
+      case DETECT_STAR:
+        fd = &stard;
+        break;
+    }
+
+    vector<KeyPoint> keypoints1;
+    fd->detect(img1, keypoints1);
+
+    descriptorExtractor->compute(img1, keypoints1, descriptors1);
+    rng = theRNG();
+}
+
 void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int feature_type)
 {
   FeatureDetector* fd = 0;
@@ -56,11 +180,15 @@ void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int featu
   //cvtColor(*img,*grayimage,CV_RGB2GRAY);
 
 
-  fd->detect(greyimage, keypoints);
+    doIteration(img1, greyimage, keypoints1, descriptors1,
+                 fd, descriptorExtractor, descriptorMatcher,
+                 rng, img);
 
-  for (vector<KeyPoint>::const_iterator it = keypoints.begin(); it != keypoints.end(); ++it)
+//  fd->detect(greyimage, keypoints);
+
+//  for (vector<KeyPoint>::const_iterator it = keypoints.begin(); it != keypoints.end(); ++it)
   {
-    circle(img, it->pt, 3, cvScalar(255, 0, 255, 0));
+//    circle(img, it->pt, 3, cvScalar(255, 0, 255, 0));
   }
 
   //pool->addImage(output_idx,outimage);

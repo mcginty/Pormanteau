@@ -40,6 +40,8 @@ public:
   void calibrate(const char* filename);
 
   void drawText(int idx, image_pool* pool, const char* text);
+
+  void setupDescriptorExtractorMatcher(const char* filename, int feature_type);
 private:
   cv::StarFeatureDetector stard;
   cv::FastFeatureDetector fastd;
@@ -51,6 +53,16 @@ private:
   cv::Mat distortion;
   cv::Size imgsize;
 
+  cv::Mat comparisonImg;
+  cv::DescriptorExtractor *descriptorExtractor;
+  cv::DescriptorMatcher *descriptorMatcher;
+
+  cv::Mat img1;
+  cv::RNG rng;
+
+  cv::Mat descriptors1;
+
+  std::vector<cv::KeyPoint> keypoints1;
 };
 
 #endif /* PROCESSOR_H_ */
