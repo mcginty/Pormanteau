@@ -64,4 +64,8 @@ public class Processor {
     cvcameraJNI.Processor_drawText(swigCPtr, this, idx, image_pool.getCPtr(pool), pool, text);
   }
 
+  public void setupDescriptorExtractorMatcher(String filename, int feature_type) {
+    cvcameraJNI.Processor_setupDescriptorExtractorMatcher(swigCPtr, this, filename, feature_type);
+  }
+
 }

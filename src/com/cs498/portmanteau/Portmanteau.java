@@ -1,15 +1,16 @@
 package com.cs498.portmanteau;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 
-import com.cs498.portmanteau.GLPortmanteauCameraViewer;
-import com.opencv.camera.NativePreviewer;
-import com.opencv.camera.NativeProcessor;
-import com.opencv.camera.NativeProcessor.PoolCallback;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -19,6 +20,13 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+
+import com.opencv.camera.NativePreviewer;
+import com.opencv.camera.NativeProcessor;
+import com.opencv.camera.NativeProcessor.PoolCallback;
+import com.opencv.jni.image_pool;
+import com.theveganrobot.cvcamera.jni.Processor;
+import com.theveganrobot.cvcamera.jni.cvcamera;
 
 public class Portmanteau extends Activity {
 	/**
@@ -64,6 +72,8 @@ public class Portmanteau extends Activity {
 
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new NativePreviewer(getApplication(), 640, 480);
+		
+		setupTestImage();
 
 		LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
@@ -84,6 +94,38 @@ public class Portmanteau extends Activity {
 
 //		frame.addView(buttons);
 		setContentView(frame);
+	}
+	
+	private void setupTestImage() {
+			final File dir = this.getFilesDir();
+			final File imageFile = new File(dir, "IMAG0263.jpg");
+			try {
+				IoUtils.extractZipResource(this.getResources().openRawResource(R.raw.testfiles), dir, true);
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+		System.out.println(" Calling processorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+		processor.setupDescriptorExtractorMatcher(imageFile.getAbsolutePath(), cvcamera.DETECT_SURF);
+	}
+	/**
+	 * Extract a resource into a real file
+	 * 
+	 * @param in typically given as getResources().openRawResource(R.raw.something)
+	 * @param name of the resulting file
+	 * @param directory target directory
+	 * @return the resulting file
+	 * @throws IOException
+	 */
+	public static File extractResource(InputStream in, String filename, File directory) throws IOException {
+		int n = in.available();
+		byte[] buffer = new byte[n];
+		in.read(buffer);
+		in.close();
+		File file = new File(directory, filename);
+		FileOutputStream out = new FileOutputStream(file);
+		out.write(buffer);
+		out.close();
+		return file;
 	}
 
 	private void setupVideoOverlay(FrameLayout frame, LayoutParams params) {
@@ -163,10 +205,27 @@ public class Portmanteau extends Activity {
 		// this one will just draw the frames to opengl
 		LinkedList<NativeProcessor.PoolCallback> cbstack = new LinkedList<PoolCallback>();
 		cbstack.add(glview.getDrawCallback());
+		cbstack.addFirst(new SURFProcessor());
+
 		mPreview.addCallbackStack(cbstack);
 		mPreview.onResume();
 
 	}
 
+	
+	
+	// final processor so taht these processor callbacks can access it
+	final Processor processor = new Processor();
+
+	class SURFProcessor implements NativeProcessor.PoolCallback {
+
+		@Override
+		public void process(int idx, image_pool pool, long timestamp,
+				NativeProcessor nativeProcessor) {
+			//processor.detectAndDrawFeatures(idx, pool, cvcamera.DETECT_SURF);
+
+		}
+
+	}
 
 }
