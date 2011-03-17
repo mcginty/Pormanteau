@@ -133,14 +133,14 @@ void doIteration( const Mat& img1, Mat& img2,
     }
     D("filteredMatches succeeded\n");
 
-    vector<Point2f> points1;
+    vector<Point2f> points1(queryIdxs.size());
     D("queryIdxs.empty(): %d\n", queryIdxs.empty());
 
     validateKeypoints(keypoints1, queryIdxs);
     KeyPoint::convert(keypoints1, points1, queryIdxs);
     D("keyPoint1::convert succeeded\n");
 
-    vector<Point2f> points2;
+    vector<Point2f> points2(trainIdxs.size());
     D("trainIdxs.empty(): %d\n", trainIdxs.empty());
 
     validateKeypoints(keypoints1, queryIdxs);
