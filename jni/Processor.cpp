@@ -91,15 +91,19 @@ void doIteration( const Mat& img1, Mat& img2,
     assert( !img1.empty() );
     assert( !img2.empty()/* && img2.cols==img1.cols && img2.rows==img1.rows*/ );
     Mat H12;
+    D("images are valid\n");
 
     vector<KeyPoint> keypoints2;
     detector->detect( img2, keypoints2 );
+    D("detector succeeded\n");
 
     Mat descriptors2;
     descriptorExtractor->compute( img2, keypoints2, descriptors2 );
+    D("exatractor succeeded\n");
 
     vector<DMatch> filteredMatches;
     crossCheckMatching( descriptorMatcher, descriptors1, descriptors2, filteredMatches, 1 );
+    D("crossCheckMatching succeeded\n");
 
     vector<int> queryIdxs( filteredMatches.size() ), trainIdxs( filteredMatches.size() );
     for( size_t i = 0; i < filteredMatches.size(); i++ )
@@ -177,13 +181,13 @@ void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int featu
   switch (feature_type)
   {
     case DETECT_SURF:
-      fd = &surfd;
+      fd = Ptr<FeatureDetector>(&surfd);
       break;
     case DETECT_FAST:
-      fd = &fastd;
+      fd = Ptr<FeatureDetector>(&fastd);
       break;
     case DETECT_STAR:
-      fd = &stard;
+      fd = Ptr<FeatureDetector>(&stard);
       break;
   }
 
@@ -193,9 +197,9 @@ void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int featu
 
   if (img.empty() || greyimage.empty() || fd.empty())
     return; //no image at input_idx!
+  D("we passed basic validation\n");
 
-
-  keypoints.clear();
+//keypoints1.clear();
 
   //if(grayimage->step1() > sizeof(uchar)) return;
   //cvtColor(*img,*grayimage,CV_RGB2GRAY);
