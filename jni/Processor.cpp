@@ -104,7 +104,7 @@ void validateKeypoints(const std::vector<KeyPoint>& keypoints, const vector<int>
 
 void doIteration( const Mat& img1, Mat& img2,
                   vector<KeyPoint>& keypoints1, const Mat& descriptors1,
-                  Ptr<FeatureDetector>& detector, Ptr<DescriptorExtractor> &descriptorExtractor,
+                  FeatureDetector* detector, Ptr<DescriptorExtractor> &descriptorExtractor,
                   Ptr<DescriptorMatcher> &descriptorMatcher,
                   RNG& rng, Mat& drawImg )
 {
@@ -223,26 +223,26 @@ void Processor::setupDescriptorExtractorMatcher(const char* filename, int featur
 void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int feature_type)
 {
   D("Processor::detectAndDrawFeatures\n");
-//  cv::Ptr<FeatureDetector> fd = 0;
-//
-//  switch (feature_type)
-//  {
-//    case DETECT_SURF:
-//      fd = Ptr<FeatureDetector>(&surfd);
-//      break;
-//    case DETECT_FAST:
-//      fd = Ptr<FeatureDetector>(&fastd);
-//      break;
-//    case DETECT_STAR:
-//      fd = Ptr<FeatureDetector>(&stard);
-//      break;
-//  }
+  FeatureDetector *fd = 0;
+
+  switch (feature_type)
+  {
+    case DETECT_SURF:
+      fd = &surfd;
+      break;
+    case DETECT_FAST:
+      fd = &fastd;
+      break;
+    case DETECT_STAR:
+      fd = &stard;
+      break;
+  }
 
   Mat greyimage = pool->getGrey(input_idx);
 
   Mat img = pool->getImage(input_idx);
 
-  if (img.empty() || greyimage.empty())// || fd.empty())
+  if (img.empty() || greyimage.empty() || fd == 0)
     return; //no image at input_idx!
   D("we passed basic validation\n");
 
@@ -253,9 +253,9 @@ void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int featu
 
 
     D("begin doIteration\n");
-//    doIteration(img1, greyimage, keypoints1, descriptors1,
-//                 fd, descriptorExtractor, descriptorMatcher,
-//                 rng, img);
+    doIteration(img1, greyimage, keypoints1, descriptors1,
+                 fd, descriptorExtractor, descriptorMatcher,
+                 rng, img);
     D("doIteration finished\n");
 
 //  fd->detect(greyimage, keypoints);
