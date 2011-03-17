@@ -126,6 +126,7 @@ void convertKeypoints(const std::vector<KeyPoint>& keypoints, std::vector<Point2
         D("points2f.size(): %zu\n", points2f.size());
         D("indexing into points2f with %zu (aka i)\n", i);
         D("points2f[i] = keypoints[idx].pt;\n");
+        D("points2f[%zu] = keypoints[%d].pt;\n", i, idx);
         points2f[i] = keypoints[idx].pt;
       } else {
         CV_Error( CV_StsBadArg, "keypointIndexes has element < 0. TODO: process this case" );
