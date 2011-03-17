@@ -125,44 +125,45 @@ void doIteration( const Mat& img1, Mat& img2,
     crossCheckMatching( descriptorMatcher, descriptors1, descriptors2, filteredMatches, 1 );
     D("crossCheckMatching succeeded\n");
 
-    vector<int> queryIdxs( filteredMatches.size() ), trainIdxs( filteredMatches.size() );
+    vector<int> *queryIdxs = new vector<int>( filteredMatches.size() );
+    vector<int> *trainIdxs = new vector<int>( filteredMatches.size() );
     for( size_t i = 0; i < filteredMatches.size(); i++ )
     {
-        queryIdxs[i] = filteredMatches[i].queryIdx;
-        trainIdxs[i] = filteredMatches[i].trainIdx;
+        queryIdxs->at(i) = filteredMatches[i].queryIdx;
+        trainIdxs->at(i) = filteredMatches[i].trainIdx;
     }
     D("filteredMatches succeeded\n");
 
-    vector<Point2f> points1(queryIdxs.size());
-    D("queryIdxs.empty(): %d\n", queryIdxs.empty());
+    vector<Point2f> *points1 = new vector<Point2f>(queryIdxs->size());
+    D("queryIdxs.empty(): %d\n", queryIdxs->empty());
 
-    validateKeypoints(keypoints1, queryIdxs);
-    KeyPoint::convert(keypoints1, points1, queryIdxs);
+    validateKeypoints(keypoints1, *queryIdxs);
+    KeyPoint::convert(keypoints1, *points1, *queryIdxs);
     D("keyPoint1::convert succeeded\n");
 
-    vector<Point2f> points2(trainIdxs.size());
-    D("trainIdxs.empty(): %d\n", trainIdxs.empty());
+    vector<Point2f> *points2 = new vector<Point2f>(trainIdxs->size());
+    D("trainIdxs.empty(): %d\n", trainIdxs->empty());
 
-    validateKeypoints(keypoints1, queryIdxs);
-    KeyPoint::convert(keypoints2, points2, trainIdxs);
+    validateKeypoints(keypoints1, *queryIdxs);
+    KeyPoint::convert(keypoints2, *points2, *trainIdxs);
     D("keyPoint2::convert succeeded\n");
 
-    H12 = findHomography( Mat(points1), Mat(points2), CV_RANSAC, 0.0 );
+    H12 = findHomography( Mat(*points1), Mat(*points2), CV_RANSAC, 0.0 );
     D("findHomography\n");
 
     if( !H12.empty() ) // filter outliers
     {
-        vector<char> matchesMask( filteredMatches.size(), 0 );
-        vector<Point2f> points1; KeyPoint::convert(keypoints1, points1, queryIdxs);
-        vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, trainIdxs);
-        Mat points1t; perspectiveTransform(Mat(points1), points1t, H12);
-        D("perspectiveTransform succeeded\n");
-        for( size_t i1 = 0; i1 < points1.size(); i1++ )
-        {
-            if( norm(points2[i1] - points1t.at<Point2f>((int)i1,0)) < 4 ) // inlier
-                matchesMask[i1] = 1;
-        }
-        D("inliers succeeded\n");
+//        vector<char> matchesMask( filteredMatches.size(), 0 );
+//        vector<Point2f> points1; KeyPoint::convert(keypoints1, points1, queryIdxs);
+//        vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, trainIdxs);
+//        Mat points1t; perspectiveTransform(Mat(points1), points1t, H12);
+//        D("perspectiveTransform succeeded\n");
+//        for( size_t i1 = 0; i1 < points1.size(); i1++ )
+//        {
+//            if( norm(points2[i1] - points1t.at<Point2f>((int)i1,0)) < 4 ) // inlier
+//                matchesMask[i1] = 1;
+//        }
+//        D("inliers succeeded\n");
         // draw inliers
 //        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
 //                   );
@@ -173,6 +174,10 @@ void doIteration( const Mat& img1, Mat& img2,
 //        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg );
         D("drawMatches (outlier)\n");
     }
+    delete points1;
+    delete points2;
+    delete queryIdxs;
+    delete trainIdxs;
 }
 
 void Processor::setupDescriptorExtractorMatcher(const char* filename, int feature_type)
