@@ -102,6 +102,34 @@ void validateKeypoints(const std::vector<KeyPoint>& keypoints, const vector<int>
   D("validateKeypoints succeeded\n");
 }
 
+void convertKeypoints(const std::vector<KeyPoint>& keypoints, std::vector<Point2f>& points2f,
+    const vector<int>& keypointIndexes)
+{
+  if( keypointIndexes.empty() )
+  {
+    points2f.resize( keypoints.size() );
+    for( size_t i = 0; i < keypoints.size(); i++ ) {
+      D("trying to store %d, size is %zu\n", i, keypoints.size());
+      points2f[i] = keypoints[i].pt;
+    }
+  }
+  else
+  {
+    points2f.resize( keypointIndexes.size() );
+    for( size_t i = 0; i < keypointIndexes.size(); i++ )
+    {
+      int idx = keypointIndexes[i];
+      if( idx >= 0 ) {
+        D("trying to store %zu, read idx %d, size is %zu\n", i, idx, keypointIndexes.size());
+        points2f[i] = keypoints[idx].pt;
+      } else {
+        CV_Error( CV_StsBadArg, "keypointIndexes has element < 0. TODO: process this case" );
+        //points2f[i] = Point2f(-1, -1);
+      }
+    }
+  }
+}
+
 void doIteration( const Mat& img1, Mat& img2,
                   vector<KeyPoint>& keypoints1, const Mat& descriptors1,
                   FeatureDetector* detector, Ptr<DescriptorExtractor> &descriptorExtractor,
@@ -138,14 +166,14 @@ void doIteration( const Mat& img1, Mat& img2,
     D("queryIdxs.empty(): %d\n", queryIdxs->empty());
 
     validateKeypoints(keypoints1, *queryIdxs);
-    KeyPoint::convert(keypoints1, *points1, *queryIdxs);
+    convertKeypoints(keypoints1, *points1, *queryIdxs);
     D("keyPoint1::convert succeeded\n");
 
     vector<Point2f> *points2 = new vector<Point2f>(trainIdxs->size());
     D("trainIdxs.empty(): %d\n", trainIdxs->empty());
 
     validateKeypoints(keypoints1, *queryIdxs);
-    KeyPoint::convert(keypoints2, *points2, *trainIdxs);
+    convertKeypoints(keypoints2, *points2, *trainIdxs);
     D("keyPoint2::convert succeeded\n");
 
     H12 = findHomography( Mat(*points1), Mat(*points2), CV_RANSAC, 0.0 );
@@ -153,21 +181,21 @@ void doIteration( const Mat& img1, Mat& img2,
 
     if( !H12.empty() ) // filter outliers
     {
-        vector<char> matchesMask( filteredMatches.size(), 0 );
-        vector<Point2f> points1; KeyPoint::convert(keypoints1, points1, *queryIdxs);
-        vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, *trainIdxs);
-        Mat points1t; perspectiveTransform(Mat(points1), points1t, H12);
-        D("perspectiveTransform succeeded\n");
-        for( size_t i1 = 0; i1 < points1.size(); i1++ )
-        {
-            if( norm(points2[i1] - points1t.at<Point2f>((int)i1,0)) < 4 ) // inlier
-                matchesMask[i1] = 1;
-        }
-        D("inliers succeeded\n");
-        // draw inliers
-        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
-                   );
-        D("drawMatches (inlier)\n");
+//        vector<char> matchesMask( filteredMatches.size(), 0 );
+//        vector<Point2f> points1; KeyPoint::convert(keypoints1, points1, *queryIdxs);
+//        vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, *trainIdxs);
+//        Mat points1t; perspectiveTransform(Mat(points1), points1t, H12);
+//        D("perspectiveTransform succeeded\n");
+//        for( size_t i1 = 0; i1 < points1.size(); i1++ )
+//        {
+//            if( norm(points2[i1] - points1t.at<Point2f>((int)i1,0)) < 4 ) // inlier
+//                matchesMask[i1] = 1;
+//        }
+//        D("inliers succeeded\n");
+//        // draw inliers
+//        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
+//                   );
+//        D("drawMatches (inlier)\n");
     }
     else
     {
