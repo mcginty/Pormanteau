@@ -120,7 +120,7 @@ void convertKeypoints(const std::vector<KeyPoint>& keypoints, std::vector<Point2
     {
       int idx = keypointIndexes[i];
       if( idx >= 0 ) {
-        D("trying to store %zu, read idx %d, size is %zu\n", i, idx, keypointIndexes.size());
+        D("trying to store %zu, read idx %d, keypoints size is %zu, size is %zu\n", i, idx, keypointIndexes.size(), keypointIndexes.size());
         points2f[i] = keypoints[idx].pt;
       } else {
         CV_Error( CV_StsBadArg, "keypointIndexes has element < 0. TODO: process this case" );
