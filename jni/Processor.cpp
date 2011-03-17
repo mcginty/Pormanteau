@@ -134,22 +134,22 @@ void doIteration( const Mat& img1, Mat& img2,
     }
     D("filteredMatches succeeded\n");
 
-    vector<Point2f> *points1 = new vector<Point2f>(queryIdxs->size());
-    D("queryIdxs.empty(): %d\n", queryIdxs->empty());
-
-    validateKeypoints(keypoints1, *queryIdxs);
-    KeyPoint::convert(keypoints1, *points1, *queryIdxs);
-    D("keyPoint1::convert succeeded\n");
-
-    vector<Point2f> *points2 = new vector<Point2f>(trainIdxs->size());
-    D("trainIdxs.empty(): %d\n", trainIdxs->empty());
-
-    validateKeypoints(keypoints1, *queryIdxs);
-    KeyPoint::convert(keypoints2, *points2, *trainIdxs);
-    D("keyPoint2::convert succeeded\n");
-
-    H12 = findHomography( Mat(*points1), Mat(*points2), CV_RANSAC, 0.0 );
-    D("findHomography\n");
+//    vector<Point2f> *points1 = new vector<Point2f>(queryIdxs->size());
+//    D("queryIdxs.empty(): %d\n", queryIdxs->empty());
+//
+//    validateKeypoints(keypoints1, *queryIdxs);
+//    KeyPoint::convert(keypoints1, *points1, *queryIdxs);
+//    D("keyPoint1::convert succeeded\n");
+//
+//    vector<Point2f> *points2 = new vector<Point2f>(trainIdxs->size());
+//    D("trainIdxs.empty(): %d\n", trainIdxs->empty());
+//
+//    validateKeypoints(keypoints1, *queryIdxs);
+//    KeyPoint::convert(keypoints2, *points2, *trainIdxs);
+//    D("keyPoint2::convert succeeded\n");
+//
+//    H12 = findHomography( Mat(*points1), Mat(*points2), CV_RANSAC, 0.0 );
+//    D("findHomography\n");
 
     if( !H12.empty() ) // filter outliers
     {
@@ -174,8 +174,8 @@ void doIteration( const Mat& img1, Mat& img2,
 //        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg );
         D("drawMatches (outlier)\n");
     }
-    delete points1;
-    delete points2;
+//    delete points1;
+//    delete points2;
     delete queryIdxs;
     delete trainIdxs;
 }
