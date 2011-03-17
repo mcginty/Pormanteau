@@ -246,7 +246,6 @@ void Processor::setupDescriptorExtractorMatcher(const char* filename, int featur
 //        fd);
     D("descriptorExtractor.empty(): %d, descriptorMatcher.empty(): %d, fd.empty(): %d\n",
         descriptorExtractor.empty(), descriptorMatcher.empty());//, fd.empty());
-    vector<KeyPoint> keypoints1;
     fd->detect(img1, keypoints1);
     D("keypoints1 size: %zu\n", keypoints1.size());
 
