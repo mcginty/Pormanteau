@@ -120,7 +120,12 @@ void convertKeypoints(const std::vector<KeyPoint>& keypoints, std::vector<Point2
     {
       int idx = keypointIndexes[i];
       if( idx >= 0 ) {
-        D("trying to store %zu, read idx %d, keypoints size is %zu, size is %zu\n", i, idx, keypointIndexes.size(), keypointIndexes.size());
+        D("keypointIndexes.size(): %zu\n", keypointIndexes.size());
+        D("keypoints.size(): %zu\n", keypoints.size());
+        D("indexing into keypoints with: %d (aka idx)\n", idx);
+        D("points2f.size(): %zu\n", points2f.size());
+        D("indexing into points2f with %zu (aka i)\n", i);
+        D("points2f[i] = keypoints[idx].pt;\n");
         points2f[i] = keypoints[idx].pt;
       } else {
         CV_Error( CV_StsBadArg, "keypointIndexes has element < 0. TODO: process this case" );
@@ -153,8 +158,11 @@ void doIteration( const Mat& img1, Mat& img2,
     crossCheckMatching( descriptorMatcher, descriptors1, descriptors2, filteredMatches, 1 );
     D("crossCheckMatching succeeded\n");
 
-    vector<int> *queryIdxs = new vector<int>( filteredMatches.size() );
-    vector<int> *trainIdxs = new vector<int>( filteredMatches.size() );
+    vector<int> *queryIdxs = new vector<int>(filteredMatches.size());
+    vector<int> *trainIdxs = new vector<int>(filteredMatches.size());
+    vector<Point2f> *points1 = new vector<Point2f>(filteredMatches.size());
+    D("points1->size(): %d\n", points1->size());
+    vector<Point2f> *points2 = new vector<Point2f>(filteredMatches.size());
     for( size_t i = 0; i < filteredMatches.size(); i++ )
     {
         queryIdxs->at(i) = filteredMatches[i].queryIdx;
@@ -162,15 +170,12 @@ void doIteration( const Mat& img1, Mat& img2,
     }
     D("filteredMatches succeeded\n");
 
-    vector<Point2f> *points1 = new vector<Point2f>(queryIdxs->size());
     D("queryIdxs.empty(): %d\n", queryIdxs->empty());
-    D("points1.size(): %d\n", points1->size());
 
     validateKeypoints(keypoints1, *queryIdxs);
     convertKeypoints(keypoints1, *points1, *queryIdxs);
     D("keyPoint1::convert succeeded\n");
 
-    vector<Point2f> *points2 = new vector<Point2f>(trainIdxs->size());
     D("trainIdxs.empty(): %d\n", trainIdxs->empty());
 
     validateKeypoints(keypoints1, *queryIdxs);
