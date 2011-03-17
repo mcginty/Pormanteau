@@ -133,13 +133,13 @@ void doIteration( const Mat& img1, Mat& img2,
         }
         D("inliers succeeded\n");
         // draw inliers
-        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
-                   );
-        D("drawMatches (inlier)\n");
+//        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
+//                   );
+//        D("drawMatches (inlier)\n");
     }
     else
     {
-        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg );
+//        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg );
         D("drawMatches (outlier)\n");
     }
 }
