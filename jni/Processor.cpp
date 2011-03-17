@@ -163,11 +163,13 @@ void Processor::setupDescriptorExtractorMatcher(const char* filename, int featur
     D("keypoints1 size: %zu\n", keypoints1.size());
 
     descriptorExtractor->compute(img1, keypoints1, descriptors1);
+    D("compute done!\n");
     rng = theRNG();
 }
 
 void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int feature_type)
 {
+  D("Processor::detectAndDrawFeatures\n");
   FeatureDetector* fd = 0;
 
   switch (feature_type)
