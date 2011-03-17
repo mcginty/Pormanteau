@@ -223,26 +223,26 @@ void Processor::setupDescriptorExtractorMatcher(const char* filename, int featur
 void Processor::detectAndDrawFeatures(int input_idx, image_pool* pool, int feature_type)
 {
   D("Processor::detectAndDrawFeatures\n");
-  cv::Ptr<FeatureDetector> fd = 0;
-
-  switch (feature_type)
-  {
-    case DETECT_SURF:
-      fd = Ptr<FeatureDetector>(&surfd);
-      break;
-    case DETECT_FAST:
-      fd = Ptr<FeatureDetector>(&fastd);
-      break;
-    case DETECT_STAR:
-      fd = Ptr<FeatureDetector>(&stard);
-      break;
-  }
+//  cv::Ptr<FeatureDetector> fd = 0;
+//
+//  switch (feature_type)
+//  {
+//    case DETECT_SURF:
+//      fd = Ptr<FeatureDetector>(&surfd);
+//      break;
+//    case DETECT_FAST:
+//      fd = Ptr<FeatureDetector>(&fastd);
+//      break;
+//    case DETECT_STAR:
+//      fd = Ptr<FeatureDetector>(&stard);
+//      break;
+//  }
 
   Mat greyimage = pool->getGrey(input_idx);
 
   Mat img = pool->getImage(input_idx);
 
-  if (img.empty() || greyimage.empty() || fd.empty())
+  if (img.empty() || greyimage.empty())// || fd.empty())
     return; //no image at input_idx!
   D("we passed basic validation\n");
 
