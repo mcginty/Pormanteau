@@ -134,48 +134,48 @@ void doIteration( const Mat& img1, Mat& img2,
     }
     D("filteredMatches succeeded\n");
 
-//    vector<Point2f> *points1 = new vector<Point2f>(queryIdxs->size());
-//    D("queryIdxs.empty(): %d\n", queryIdxs->empty());
-//
-//    validateKeypoints(keypoints1, *queryIdxs);
-//    KeyPoint::convert(keypoints1, *points1, *queryIdxs);
-//    D("keyPoint1::convert succeeded\n");
-//
-//    vector<Point2f> *points2 = new vector<Point2f>(trainIdxs->size());
-//    D("trainIdxs.empty(): %d\n", trainIdxs->empty());
-//
-//    validateKeypoints(keypoints1, *queryIdxs);
-//    KeyPoint::convert(keypoints2, *points2, *trainIdxs);
-//    D("keyPoint2::convert succeeded\n");
-//
-//    H12 = findHomography( Mat(*points1), Mat(*points2), CV_RANSAC, 0.0 );
-//    D("findHomography\n");
+    vector<Point2f> *points1 = new vector<Point2f>(queryIdxs->size());
+    D("queryIdxs.empty(): %d\n", queryIdxs->empty());
+
+    validateKeypoints(keypoints1, *queryIdxs);
+    KeyPoint::convert(keypoints1, *points1, *queryIdxs);
+    D("keyPoint1::convert succeeded\n");
+
+    vector<Point2f> *points2 = new vector<Point2f>(trainIdxs->size());
+    D("trainIdxs.empty(): %d\n", trainIdxs->empty());
+
+    validateKeypoints(keypoints1, *queryIdxs);
+    KeyPoint::convert(keypoints2, *points2, *trainIdxs);
+    D("keyPoint2::convert succeeded\n");
+
+    H12 = findHomography( Mat(*points1), Mat(*points2), CV_RANSAC, 0.0 );
+    D("findHomography\n");
 
     if( !H12.empty() ) // filter outliers
     {
-//        vector<char> matchesMask( filteredMatches.size(), 0 );
-//        vector<Point2f> points1; KeyPoint::convert(keypoints1, points1, queryIdxs);
-//        vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, trainIdxs);
-//        Mat points1t; perspectiveTransform(Mat(points1), points1t, H12);
-//        D("perspectiveTransform succeeded\n");
-//        for( size_t i1 = 0; i1 < points1.size(); i1++ )
-//        {
-//            if( norm(points2[i1] - points1t.at<Point2f>((int)i1,0)) < 4 ) // inlier
-//                matchesMask[i1] = 1;
-//        }
-//        D("inliers succeeded\n");
+        vector<char> matchesMask( filteredMatches.size(), 0 );
+        vector<Point2f> points1; KeyPoint::convert(keypoints1, points1, *queryIdxs);
+        vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, *trainIdxs);
+        Mat points1t; perspectiveTransform(Mat(points1), points1t, H12);
+        D("perspectiveTransform succeeded\n");
+        for( size_t i1 = 0; i1 < points1.size(); i1++ )
+        {
+            if( norm(points2[i1] - points1t.at<Point2f>((int)i1,0)) < 4 ) // inlier
+                matchesMask[i1] = 1;
+        }
+        D("inliers succeeded\n");
         // draw inliers
-//        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
-//                   );
+        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
+                   );
         D("drawMatches (inlier)\n");
     }
     else
     {
-//        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg );
+        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg );
         D("drawMatches (outlier)\n");
     }
-//    delete points1;
-//    delete points2;
+    delete points1;
+    delete points2;
     D("deleting queryIdxs\n");
     delete queryIdxs;
     D("deleting trainIdxs\n");
