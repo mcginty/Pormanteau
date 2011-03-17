@@ -84,6 +84,7 @@ void warpPerspectiveRand( const Mat& src, Mat& dst, Mat& H, RNG& rng )
 
 void validateKeypoints(const std::vector<KeyPoint>& keypoints, const vector<int>& keypointIndexes)
 {
+  D("begin validateKeypoints\n");
   for( size_t i = 0; i < keypointIndexes.size(); i++ )
   {
     int idx = keypointIndexes[i];
@@ -98,6 +99,7 @@ void validateKeypoints(const std::vector<KeyPoint>& keypoints, const vector<int>
       //points2f[i] = Point2f(-1, -1);
     }
   }
+  D("validateKeypoints succeeded\n");
 }
 
 void doIteration( const Mat& img1, Mat& img2,
