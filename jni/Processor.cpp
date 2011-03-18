@@ -82,60 +82,6 @@ void warpPerspectiveRand( const Mat& src, Mat& dst, Mat& H, RNG& rng )
     warpPerspective( src, dst, H, src.size() );
 }
 
-void validateKeypoints(const std::vector<KeyPoint>& keypoints, const vector<int>& keypointIndexes)
-{
-  //D("begin validateKeypoints\n");
-  for( size_t i = 0; i < keypointIndexes.size(); i++ )
-  {
-    int idx = keypointIndexes[i];
-    if( idx >= 0 ) {
-      if (idx > (keypoints.size() - 1)) {
-        //D("we got an out of bounds thing. idx: %d, size: %zu\n", idx, keypoints.size());
-      }
-    }
-    else
-    {
-      //D("keypointIndexes has element < 0. TODO: process this case" );
-      //points2f[i] = Point2f(-1, -1);
-    }
-  }
-  //D("validateKeypoints succeeded\n");
-}
-
-void convertKeypoints(const std::vector<KeyPoint>& keypoints, std::vector<Point2f>& points2f,
-    const vector<int>& keypointIndexes)
-{
-  if( keypointIndexes.empty() )
-  {
-    points2f.resize( keypoints.size() );
-    for( size_t i = 0; i < keypoints.size(); i++ ) {
-      D("trying to store %d, size is %zu\n", i, keypoints.size());
-      points2f[i] = keypoints[i].pt;
-    }
-  }
-  else
-  {
-    points2f.resize( keypointIndexes.size() );
-    for( size_t i = 0; i < keypointIndexes.size(); i++ )
-    {
-      int idx = keypointIndexes[i];
-      if( idx >= 0 ) {
-        D("keypointIndexes.size(): %zu\n", keypointIndexes.size());
-        D("keypoints.size(): %zu\n", keypoints.size());
-        D("indexing into keypoints with: %d (aka idx)\n", idx);
-        D("points2f.size(): %zu\n", points2f.size());
-        D("indexing into points2f with %zu (aka i)\n", i);
-        D("points2f[i] = keypoints[idx].pt;\n");
-        D("points2f[%zu] = keypoints[%d].pt;\n", i, idx);
-        points2f[i] = keypoints[idx].pt;
-      } else {
-        CV_Error( CV_StsBadArg, "keypointIndexes has element < 0. TODO: process this case" );
-        //points2f[i] = Point2f(-1, -1);
-      }
-    }
-  }
-}
-
 void doIteration( const Mat& img1, Mat& img2,
                   vector<KeyPoint>& keypoints1, const Mat& descriptors1,
                   FeatureDetector* detector, Ptr<DescriptorExtractor> &descriptorExtractor,
@@ -173,14 +119,12 @@ void doIteration( const Mat& img1, Mat& img2,
 
     D("queryIdxs.empty(): %d\n", queryIdxs->empty());
 
-    validateKeypoints(keypoints1, *queryIdxs);
-    convertKeypoints(keypoints1, *points1, *queryIdxs);
+    KeyPoint::convert(keypoints1, *points1, *queryIdxs);
     D("keyPoint1::convert succeeded\n");
 
     D("trainIdxs.empty(): %d\n", trainIdxs->empty());
 
-    validateKeypoints(keypoints1, *queryIdxs);
-    convertKeypoints(keypoints2, *points2, *trainIdxs);
+    KeyPoint::convert(keypoints2, *points2, *trainIdxs);
     D("keyPoint2::convert succeeded\n");
 
     H12 = findHomography( Mat(*points1), Mat(*points2), CV_RANSAC, 0.0 );
