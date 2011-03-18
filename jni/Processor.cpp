@@ -84,22 +84,22 @@ void warpPerspectiveRand( const Mat& src, Mat& dst, Mat& H, RNG& rng )
 
 void validateKeypoints(const std::vector<KeyPoint>& keypoints, const vector<int>& keypointIndexes)
 {
-  D("begin validateKeypoints\n");
+  //D("begin validateKeypoints\n");
   for( size_t i = 0; i < keypointIndexes.size(); i++ )
   {
     int idx = keypointIndexes[i];
     if( idx >= 0 ) {
       if (idx > (keypoints.size() - 1)) {
-        D("we got an out of bounds thing. idx: %d, size: %zu\n", idx, keypoints.size());
+        //D("we got an out of bounds thing. idx: %d, size: %zu\n", idx, keypoints.size());
       }
     }
     else
     {
-      D("keypointIndexes has element < 0. TODO: process this case" );
+      //D("keypointIndexes has element < 0. TODO: process this case" );
       //points2f[i] = Point2f(-1, -1);
     }
   }
-  D("validateKeypoints succeeded\n");
+  //D("validateKeypoints succeeded\n");
 }
 
 void convertKeypoints(const std::vector<KeyPoint>& keypoints, std::vector<Point2f>& points2f,
@@ -188,26 +188,31 @@ void doIteration( const Mat& img1, Mat& img2,
 
     if( !H12.empty() ) // filter outliers
     {
-//        vector<char> matchesMask( filteredMatches.size(), 0 );
-//        vector<Point2f> points1; KeyPoint::convert(keypoints1, points1, *queryIdxs);
-//        vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, *trainIdxs);
-//        Mat points1t; perspectiveTransform(Mat(points1), points1t, H12);
-//        D("perspectiveTransform succeeded\n");
-//        for( size_t i1 = 0; i1 < points1.size(); i1++ )
-//        {
-//            if( norm(points2[i1] - points1t.at<Point2f>((int)i1,0)) < 4 ) // inlier
-//                matchesMask[i1] = 1;
-//        }
-//        D("inliers succeeded\n");
-//        // draw inliers
-//        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
-//                   );
-//        D("drawMatches (inlier)\n");
+        vector<char> matchesMask( filteredMatches.size(), 0 );
+        vector<Point2f> points1; KeyPoint::convert(keypoints1, points1, *queryIdxs);
+        vector<Point2f> points2; KeyPoint::convert(keypoints2, points2, *trainIdxs);
+        Mat points1t; perspectiveTransform(Mat(points1), points1t, H12);
+        D("perspectiveTransform succeeded\n");
+        for( size_t i1 = 0; i1 < points1.size(); i1++ )
+        {
+            if( norm(points2[i1] - points1t.at<Point2f>((int)i1,0)) < 4 ) // inlier
+                matchesMask[i1] = 1;
+        }
+        D("inliers succeeded\n");
+        // draw inliers
+        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
+                   );
+        D("drawMatches (inlier)\n");
+        //drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg );
+        //for (vector<KeyPoint>::const_iterator it = keypoints2.begin(); it != keypoints2.end(); ++it)
+        //{
+        //  circle(drawImg, it->pt, 3, cvScalar(255, 0, 255, 0));
+        //}
+        //D("drawMatches (outlier)\n");
     }
     else
     {
-        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg );
-        D("drawMatches (outlier)\n");
+        D("drawMatches (nomatches)\n");
     }
     delete points1;
     delete points2;
