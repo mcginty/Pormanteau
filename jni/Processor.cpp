@@ -23,7 +23,8 @@ using namespace cv;
 Processor::Processor() :
       stard(20/*max_size*/, 8/*response_threshold*/, 15/*line_threshold_projected*/, 8/*line_threshold_binarized*/, 5/*suppress_nonmax_size*/),
       fastd(20/*threshold*/, true/*nonmax_suppression*/),
-      surfd(100./*hessian_threshold*/, 1/*octaves*/, 2/*octave_layers*/)
+      //      surfd(10./*hessian_threshold*/, 1/*octaves*/, 2/*octave_layers*/)
+      surfd()
 
 {
 
@@ -90,6 +91,7 @@ void doIteration( const Mat& img1, Mat& img2,
 {
     assert( !img1.empty() );
     assert( !img2.empty()/* && img2.cols==img1.cols && img2.rows==img1.rows*/ );
+    D("img1 size: %d x %d   img2 size: %d x %d \n", img1.cols, img1.rows, img2.cols, img2.rows);
     Mat H12;
     D("images are valid\n");
 
@@ -140,19 +142,18 @@ void doIteration( const Mat& img1, Mat& img2,
         for( size_t i1 = 0; i1 < points1.size(); i1++ )
         {
             if( norm(points2[i1] - points1t.at<Point2f>((int)i1,0)) < 4 ) // inlier
-                matchesMask[i1] = 1;
+            {
+              matchesMask[i1] = 1;
+              circle(drawImg, points2[i1], 3, cvScalar(255, 0, 255, 0));
+            }
         }
         D("inliers succeeded\n");
         // draw inliers
-        drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
-                   );
+        //drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg, CV_RGB(0, 255, 0), CV_RGB(0, 0, 255), matchesMask
+        //           );
         D("drawMatches (inlier)\n");
         //drawMatches( img1, keypoints1, img2, keypoints2, filteredMatches, drawImg );
-        //for (vector<KeyPoint>::const_iterator it = keypoints2.begin(); it != keypoints2.end(); ++it)
-        //{
-        //  circle(drawImg, it->pt, 3, cvScalar(255, 0, 255, 0));
-        //}
-        //D("drawMatches (outlier)\n");
+        D("drawMatches (outlier)\n");
     }
     else
     {

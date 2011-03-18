@@ -71,7 +71,8 @@ public class Portmanteau extends Activity {
 		FrameLayout frame = new FrameLayout(this);
 
 		// Create our Preview view and set it as the content of our activity.
-		mPreview = new NativePreviewer(getApplication(), 640, 480);
+		mPreview = new NativePreviewer(getApplication(), 800, 600);
+		//mPreview
 		
 		setupTestImage();
 
@@ -98,7 +99,7 @@ public class Portmanteau extends Activity {
 	
 	private void setupTestImage() {
 			final File dir = this.getFilesDir();
-			final File imageFile = new File(dir, "IMAG0263.jpg");
+			final File imageFile = new File(dir, "IMAG0265.jpg");
 			try {
 				IoUtils.extractZipResource(this.getResources().openRawResource(R.raw.testfiles), dir, true);
 			} catch (final IOException e) {
