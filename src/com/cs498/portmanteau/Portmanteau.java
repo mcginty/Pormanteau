@@ -209,7 +209,7 @@ public class Portmanteau extends Activity {
 
 		mPreview.addCallbackStack(cbstack);
 		mPreview.onResume();
-
+		
 	}
 
 	
@@ -222,7 +222,7 @@ public class Portmanteau extends Activity {
 		@Override
 		public void process(int idx, image_pool pool, long timestamp,
 				NativeProcessor nativeProcessor) {
-			//processor.detectAndDrawFeatures(idx, pool, cvcamera.DETECT_SURF);
+			processor.detectAndDrawFeatures(idx, pool, cvcamera.DETECT_SURF);
 
 		}
 
